@@ -18,6 +18,32 @@ if __name__ == '__main__':
     def load_Dataframe(link):
         df= pd.read_csv(link)  #Currently on my local machine
         return df
+    
+    def get_dom(dt):
+        return dt.day
+
+    def get_month(dt):
+        return dt.month
+
+    def get_year(dt):
+        return dt.year
+    
+    def apply_dwhy(df):
+        df["date_mutation"] = pd.to_datetime(df["date_mutation"])
+        df["Day"] = df["date_mutation"].apply(get_dom)
+        df["Month"] = df["date_mutation"].apply(get_month)
+        df["Year"] = df["date_mutation"].apply(get_year)
+        return df
+
+    
+    def highlight_NbNaN(df2):
+        #pourcentage = 0.7 * len(df)
+        return ['background-color: green']*len(df2) if df2["Nb_NaN"]/len(df)<0.7 else ['background-color: red']*len(df2)
+    
+    def highlight(df2):
+    #pourcentage = 0.7 * len(df)
+        return ['background-color: green']*len(df2) if df2["% de valeurs nulls"]=='moins de 70%' else ['background-color: red']*len(df2)
+
 
     df= load_Dataframe("full_2019.csv")
 
@@ -29,10 +55,6 @@ if __name__ == '__main__':
     st.title("on supprimes les valeurs ayant trop de valeurs nulls")
     df_isnull = pd.DataFrame(df.isnull().sum())
     df_isnull.rename(columns = {0 : "Nb_NaN"}, inplace=True)
-    @st.cache
-    def highlight_NbNaN(df2):
-        #pourcentage = 0.7 * len(df)
-        return ['background-color: green']*len(df2) if df2["Nb_NaN"]/len(df)<0.7 else ['background-color: red']*len(df2)
     
     col1,col2 = st.columns(2)
     
@@ -46,10 +68,6 @@ if __name__ == '__main__':
     df_legend.drop(columns="couleurs", inplace=True)
     df_legend.rename(columns= {1 : "% de valeurs nulls"}, inplace=True)
     #df_legend
-
-    def highlight(df2):
-    #pourcentage = 0.7 * len(df)
-        return ['background-color: green']*len(df2) if df2["% de valeurs nulls"]=='moins de 70%' else ['background-color: red']*len(df2)
 
     df_legend = df_legend.style.apply(highlight, axis=1)
     col2.dataframe(df_legend)
@@ -108,23 +126,6 @@ if __name__ == '__main__':
     st.write(df_clean_1.describe())
 
 
-
-    def get_dom(dt):
-        return dt.day
-
-    def get_month(dt):
-        return dt.month
-
-    def get_year(dt):
-        return dt.year
-    
-    def apply_dwhy(df):
-        df["date_mutation"] = pd.to_datetime(df["date_mutation"])
-        df["Day"] = df["date_mutation"].apply(get_dom)
-        df["Month"] = df["date_mutation"].apply(get_month)
-        df["Year"] = df["date_mutation"].apply(get_year)
-        return df
-
     df_clean_1 = apply_dwhy(df_clean_1)
 
     st.title("Dataframe with Day, Month, Year")
@@ -146,25 +147,4 @@ if __name__ == '__main__':
 
 
 
-
-    #sizes = df.isnull().sum().values
-    #explode = (0, 0.1, 0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
-
-    #fig1, ax1 = plt.subplots()
-    #ax1.pie(sizes, labels=df.isnull().sum().index, autopct='%1.1f%%',
-    #        shadow=True, startangle=90)
-    #ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-
-    #st.pyplot(fig1)
-
-
-
-
-    #st.dataframe(df)
-
-
-    #df.drop("code_commune",axis=1,inplace=True)
-    #df.drop(L,axis=1, inplace=True)
-
-#df_head = df.head(10000)
 
